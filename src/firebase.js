@@ -1,17 +1,20 @@
-import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
-  appId: process.env.REACT_APP_MESSAGING_APP_ID,
-};
+import firebase from "firebase/app";
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBNcpEncD6i1h0Zq3-toUNwoQZcakQ66CI",
+  authDomain: "audio-book-app-flavius.firebaseapp.com",
+  databaseURL:
+    "https://audio-book-app-flavius-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "audio-book-app-flavius",
+  storageBucket: "audio-book-app-flavius.appspot.com",
+  messagingSenderId: "186210728423",
+  appId: "1:186210728423:web:b482886f41d021d9152542",
+  measurementId: "G-4Q4KH0JHVT",
+};
 firebase.initializeApp(firebaseConfig);
 
 export default firebase;

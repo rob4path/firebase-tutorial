@@ -1,10 +1,11 @@
-import React from 'react';
+import { AuthProvider } from "./auth/Auth";
+import Login from "./auth/Login";
+import React from "react";
+import SnapshotFirebaseAdvanced from "./SnapshotFirebaseAdvanced";
+import Welcome from "./Welcome";
+
 //import GetFirebase from './GetFirebase';
 //import SnapshotFirebase from './SnapshotFirebase';
-import { AuthProvider } from './auth/Auth';
-import Login from './auth/Login';
-import Welcome from './Welcome';
-import SnapshotFirebaseAdvanced from './SnapshotFirebaseAdvanced';
 
 function App() {
   //const get = false;
@@ -12,8 +13,8 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <Welcome />
-        <Login />
+        {/* <Welcome /> */}
+        {/* <Login /> */}
         {/* {get ? <GetFirebase /> : <SnapshotFirebase />} */}
         <SnapshotFirebaseAdvanced />
       </AuthProvider>

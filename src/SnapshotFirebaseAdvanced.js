@@ -1,25 +1,28 @@
-import React, { useState, useEffect, Fragment, useContext } from 'react';
-import firebase from './firebase';
-import { v4 as uuidv4 } from 'uuid';
-import { AuthContext } from './auth/Auth';
+import React, { Fragment, useContext, useEffect, useState } from "react";
+
+import { AuthContext } from "./auth/Auth";
+import firebase from "./firebase";
+import { v4 as uuidv4 } from "uuid";
 
 function SnapshotFirebaseAdvanced() {
   const { currentUser } = useContext(AuthContext);
   const currentUserId = currentUser ? currentUser.uid : null;
-  const [schools, setSchools] = useState([]);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState('');
-  const [desc, setDesc] = useState('');
-  const [score, setScore] = useState('');
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [desc, setDesc] = useState("");
+  const [genre, setGenre] = useState("");
+  const [cover, setCover] = useState("");
 
-  const ref = firebase.firestore().collection('schools');
+  const ref = firebase.firestore().collection("Books");
 
   //REALTIME GET FUNCTION
-  function getSchools() {
+  function getBooks() {
     setLoading(true);
     ref
       //.where('owner', '==', currentUserId)
-      //.where('title', '==', 'School1') // does not need index
+      //.where('title', '==', 'Book1') // does not need index
       //.where('score', '<=', 10)    // needs index
       //.orderBy('owner', 'asc')
       //.limit(3)
@@ -28,43 +31,55 @@ function SnapshotFirebaseAdvanced() {
         querySnapshot.forEach((doc) => {
           items.push(doc.data());
         });
-        setSchools(items);
+        setBooks(items);
         setLoading(false);
       });
   }
 
   useEffect(() => {
-    getSchools();
+    getBooks();
     // eslint-disable-next-line
   }, []);
 
   // ADD FUNCTION
-  function addSchool() {
-    const owner = currentUser ? currentUser.uid : 'unknown';
-    const ownerEmail = currentUser ? currentUser.email : 'unknown';
-    const newSchool = {
+  function addBook() {
+    const owner = currentUser ? currentUser.uid : "unknown";
+    const ownerEmail = currentUser ? currentUser.email : "unknown";
+    const newBookT = {
       title,
+      author,
+      genre,
       desc,
-      score: +score,
-      id: uuidv4(),
-      owner,
-      ownerEmail,
+      cover,
+      id: title,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
     };
+    const newBook = {
+      name: title,
+      state: author,
+      country: genre,
+      audio: [
+        {
+          chapter: title + "Chapter 1",
+          url: cover + "url1",
+        },
+      ],
+      id: title,
+    };
 
     ref
-      .doc(newSchool.id)
-      .set(newSchool)
+      .doc(newBook.id)
+      .set(newBook)
       .catch((err) => {
         console.error(err);
       });
   }
 
   //DELETE FUNCTION
-  function deleteSchool(school) {
+  function deleteBook(book) {
     ref
-      .doc(school.id)
+      .doc(book.id)
       .delete()
       .catch((err) => {
         console.error(err);
@@ -72,15 +87,14 @@ function SnapshotFirebaseAdvanced() {
   }
 
   // EDIT FUNCTION
-  function editSchool(school) {
-    const updatedSchool = {
-      score: +score,
+  function editBook(book) {
+    const updatedBook = {
       lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
     };
     setLoading();
     ref
-      .doc(school.id)
-      .update(updatedSchool)
+      .doc(book.id)
+      .update(updatedBook)
       .catch((err) => {
         console.error(err);
       });
@@ -88,7 +102,7 @@ function SnapshotFirebaseAdvanced() {
 
   return (
     <Fragment>
-      <h1>Schools (SNAPSHOT adv.)</h1>
+      <h1>Add Books </h1>
       <div className="inputBox">
         <h3>Add New</h3>
         <h6>Title</h6>
@@ -97,27 +111,42 @@ function SnapshotFirebaseAdvanced() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <h6>Score 0-10</h6>
+        <h6>Author</h6>
         <input
-          type="number"
-          value={score}
-          onChange={(e) => setScore(e.target.value)}
+          type="text"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
+        <h6>Categorie</h6>
+        <input
+          type="text"
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
         />
         <h6>Description</h6>
         <textarea value={desc} onChange={(e) => setDesc(e.target.value)} />
-        <button onClick={() => addSchool()}>Submit</button>
+        <h6>Image</h6>
+        <textarea value={cover} onChange={(e) => setCover(e.target.value)} />
+        <button onClick={() => addBook()}>Submit</button>
       </div>
       <hr />
+      <h2>Db books</h2>
       {loading ? <h1>Loading...</h1> : null}
-      {schools.map((school) => (
-        <div className="school" key={school.id}>
-          <h2>{school.title}</h2>
-          <p>{school.desc}</p>
-          <p>{school.score}</p>
-          <p>{school.ownerEmail}</p>
+      {books.map((book) => (
+        <div className="book" key={book.id}>
+          <h2>Title: {book.title}</h2>
+          <h3>Author: {book.author}</h3>
+          {book.genre ? (
+            <h3>Category: {book.genre}</h3>
+          ) : (
+            <h5 className="noField">Nu exista categorie</h5>
+          )}
+          <p>Description: {book.desc}</p>
+
+          <img className="bookCover" src={book.cover} alt={book.title} />
           <div>
-            <button onClick={() => deleteSchool(school)}>X</button>
-            <button onClick={() => editSchool(school)}>Edit Score</button>
+            <button onClick={() => deleteBook(book)}>X</button>
+            <button onClick={() => editBook(book)}>Edit Score</button>
           </div>
         </div>
       ))}
